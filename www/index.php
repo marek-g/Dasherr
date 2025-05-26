@@ -44,7 +44,7 @@
 		</div>
 		
 		<!-- Widgets get added here -->
-		<div id="areaWidgets" class="row row-cols-3 row-cols-sm-4 row-cols-md-6 row-cols-lg-10 row-cols-xl-12 gy-5" style="display:none">
+		<div id="areaWidgets" class="row row-cols-1 row-cols-sm-1 row-cols-md-1 row-cols-lg-2 row-cols-xl-2" style="display:none">
 		</div>
 	
 		<br>
@@ -55,7 +55,6 @@
 			
 		<!-- End Dashboard Contents -->
 	</div>
-
 
 	<!-- End Window Contents -->
   </body>

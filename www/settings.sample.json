@@ -7,10 +7,33 @@
 	"widgets": [
 		{
 			"disable": 0,
+			"name": "Dasher VM",
 			"type": "glances",
 			"settings": {
 				"url": "http://homeserver:61208/",
 				"refreshMs": 5000
+			}
+		},
+		{
+			"disable": 0,
+			"name": "PVE",
+			"type": "proxmox",
+			"settings": {
+				"url": "https://homeserver:8006",
+				"refreshMs": 31000,
+				"node": "pve",
+				"token": "user@realm!tokenname=token" // Privileges: Sys.Audit, Pool.Audit, VM.Audit, Datastore.Audit
+			}
+		}
+		,
+		{
+			"disable": 0,
+			"name": "pfSense",
+			"type": "pfsense", // requires https://github.com/jaredhendrickson13/pfsense-api
+			"settings": {
+				"url": "https://homeserver:443",
+				"refreshMs": 35000,
+				"xapikey": "***"
 			}
 		}
 	],

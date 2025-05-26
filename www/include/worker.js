@@ -13,6 +13,9 @@ window.onload = function() {
 	//create widgets
 	if (gSettings.widgets.length > 0)
 	{
+		nGlances=0;
+		nProxmox=0;
+		nPfsense=0;
 		for (let n1 = 0; n1 < gSettings.widgets.length; n1++) {
 			if (gSettings.widgets[n1].disable) {
 				//allows quickly disabling a widget
@@ -23,8 +26,23 @@ window.onload = function() {
 			//glances
 			if(gSettings.widgets[n1].type === "glances") {
 				createWidgetGlances(n1);
-				setInterval(refreshWidgetGlances, gSettings.widgets[n1].settings.refreshMs, n1);
-				refreshWidgetGlances(n1);
+				setInterval(refreshWidgetGlances, gSettings.widgets[n1].settings.refreshMs, n1, nGlances);
+				refreshWidgetGlances(n1, nGlances);
+				nGlances++;
+			}
+			//proxmox
+			if(gSettings.widgets[n1].type === "proxmox") {
+				createWidgetProxmox(n1);
+				setInterval(refreshWidgetProxmox, gSettings.widgets[n1].settings.refreshMs, n1, nProxmox);
+				refreshWidgetProxmox(n1, nProxmox);
+				nProxmox++;
+			}
+			//pfsense
+			if(gSettings.widgets[n1].type === "pfsense") {
+				createWidgetPfsense(n1);
+				setInterval(refreshWidgetPfsense, gSettings.widgets[n1].settings.refreshMs, n1, nPfsense);
+				refreshWidgetPfsense(n1, nPfsense);
+				nPfsense++;
 			}
 		}
 	}
@@ -43,19 +61,19 @@ window.onload = function() {
 		}
 		
 		for (let n2 = 0; n2 < gSettings.sections[n1].tiles.length; n2++) {
-    		if (gSettings.sections[n1].tiles[n2].disable) {
-    			//allows quickly disabling a tile
-    			continue;
-    		}
+			if (gSettings.sections[n1].tiles[n2].disable) {
+				//allows quickly disabling a tile
+				continue;
+			}
 			
 			let thisUrl = gSettings.sections[n1].tiles[n2].url;
 			let thisDot = document.getElementById('dot' + gSettings.sections[n1].name + gSettings.sections[n1].tiles[n2].name)
 			
-    		if (gSettings.sections[n1].tiles[n2].disableCheck) {
-    			//allows quickly disabling a tile online check
-    			thisDot.remove();
-    			continue;
-    		}
+			if (gSettings.sections[n1].tiles[n2].disableCheck) {
+				//allows quickly disabling a tile online check
+				thisDot.remove();
+				continue;
+			}
 			
 			checkOnline(thisUrl, thisDot)
 		}
@@ -104,11 +122,11 @@ function createSections() {
 		
 		//create tiles
 		for (let n2 = 0; n2 < gSettings.sections[n1].tiles.length; n2++) {
-    		if (gSettings.sections[n1].tiles[n2].disable) {
-    			//allows quickly disabling a tile
-    			continue;
-    		}
-            let thisTile = gSettings.sections[n1].tiles[n2].name;
+			if (gSettings.sections[n1].tiles[n2].disable) {
+				//allows quickly disabling a tile
+				continue;
+			}
+			let thisTile = gSettings.sections[n1].tiles[n2].name;
 
 			//add indicator dot
 			let tileDot = document.createElement('span');
@@ -131,6 +149,8 @@ function createSections() {
 				thisOpenTab = gSettings.page.openTab;
 			}
 			
+			tileLink.rel = 'noreferrer'
+
 			if (thisOpenTab === 'new') {
 				tileLink.target = '_blank';
 			}
@@ -159,6 +179,7 @@ function createSections() {
 				
 				tileLink.appendChild(tileIcon);
 			} else if (gSettings.sections[n1].tiles[n2].icon) {
+				
 				let tileIcon = document.createElement('img');
 				tileIcon.id = 'iconImg' + thisSec + thisTile;
 				tileIcon.src = gSettings.sections[n1].tiles[n2].icon;
@@ -179,8 +200,9 @@ function createSections() {
 				tileIcon.style = 'margin-right: 5px;';
 				
 				tileLink.appendChild(tileIcon);
-			}
 
+				//document.styleSheets[0].insertRule('.iconSVGObj { color: ${currTheme.colorPr}; }');
+			}
 			tileLink.innerHTML = tileLink.innerHTML + thisTile;
 		}
 	}
@@ -189,14 +211,14 @@ function createSections() {
 async function checkOnline(thisUrl, thisId) {
 	//reads all tiles from settings and sets their respective indicators to green
 	const options = {
-		method: 'GET',
-		mode: 'no-cors',
-		connection: 'close'
+		method: 'POST',
+		body: new URLSearchParams({
+			url: thisUrl
+		})
 	};
 
-
-	const response = await fetch(thisUrl,options);
-	if (response.status = 200) {
+	const response = await fetch('include/checkOnline.php', options);
+	if (response.ok) {
 		thisId.className = thisId.className.replace(/dot(?!\S)/g, 'dot dot-green');
 		
 		//this theming needs to be done here because js can't change style of future elements of a class
@@ -243,14 +265,323 @@ function createWidgetGlances(nW) {
 	hostDiv.appendChild(wgtDiv);
 }
 
+function createWidgetProxmox(nW) {
+	let hostDiv = document.getElementById('areaWidgets');
+	let wgtDiv = document.createElement('div');
+	wgtDiv.classList.add('col');
+
+	// Add tooltip to widget
+	if (gSettings.widgets[nW].info) {
+		enableTooltips = true;
+		wgtDiv.setAttribute("data-bs-toggle", "tooltip");
+		wgtDiv.setAttribute("data-bs-placement", "bottom");
+		wgtDiv.setAttribute("data-bs-title", gSettings.widgets[nW].info);
+	}
+
+	// Add widget's name and <hr> under it only if name is specified
+	wgtDiv.innerHTML = (gSettings.widgets[nW].name ? '<h7>' + gSettings.widgets[nW].name + '</h7><hr>' : '')
+		+ '<div class="widget widgetProxmox">'
+		+ '  <details closed>'
+        + '     <summary class="d-flex">'
+        + '        <span class="node-ressources">'
+        + '           <span><i class="fa fa-microchip"></i> Loading...</span>'
+        + '           <span><i class="fa fa-memory"></i> Loading...</span>'
+        + '        </span>'
+        + '     </summary>'
+		+ '     <div class="vm-list">'
+        + '        <i class="fa fa-server"></i> VMs & Containers Loading...'
+		+ '     </div>'
+        + '  </details>'
+		+ '  <details closed>'
+        + '     <summary class="d-flex">'
+        + '        <span class="storage-summary">'
+		+ '           <span><i class="fa fa-database"></i> Loading...</span>'
+		+ '        </span>'
+		+ '     </summary>'
+        + '     <div class="storage-list"></div>'
+        + '  </details>'
+		+ '</div>';
+
+	hostDiv.appendChild(wgtDiv);
+
+	// Inject CSS
+	const style = document.createElement('style');
+	style.id = 'proxmox-widget-styles';
+	style.textContent = `
+		.bar-container, .dual-bar-container {
+			background: #ddd;
+			border-radius: 4px;
+			height: 6px;
+			margin: 4px 0 10px;
+			position: relative;
+			overflow: hidden;
+		}
+		.bar {
+			height: 100%;
+			position: absolute;
+			top: 0;
+			left: 0;
+			transition: width 0.3s ease;
+			opacity: 0.8;
+		}
+		.cpu-bar {
+			background: linear-gradient(to right, #4caf50, #81c784);
+		}
+		.ram-bar {
+			background: linear-gradient(to right, #2196f3, #64b5f6);
+		}
+	`;
+	document.head.appendChild(style);
+}
+
+function createWidgetPfsense(nW) {
+	let hostDiv = document.getElementById('areaWidgets');
+	let wgtDiv = document.createElement('div');
+	wgtDiv.classList.add('col');
+
+	// Add tooltip to widget
+	if (gSettings.widgets[nW].info) {
+		enableTooltips = true;
+		wgtDiv.setAttribute("data-bs-toggle", "tooltip");
+		wgtDiv.setAttribute("data-bs-placement", "bottom");
+		wgtDiv.setAttribute("data-bs-title", gSettings.widgets[nW].info);
+	}
+
+	// Add widget's name and <hr> under it only if name is specified
+	wgtDiv.innerHTML = (gSettings.widgets[nW].name ? '<h7>' + gSettings.widgets[nW].name + '</h7><hr>' : '')
+		+ '<div class="widget widgetPfsense">'
+        + '  <div class="wan-ip"><i class="fa fa-globe"></i> Loading...</div>'
+        + '  <div class="wanStatus"><i class="fa fa-signal"></i> Loading...</div>'
+        + '  <div class="bandwidth"><i class="fa fa-gauge"></i> Loading...</div>'
+        + '  <div class="ping"><i class="fa fa-clock"></i> Loading...</div>'
+		+ '</div>';
+
+	hostDiv.appendChild(wgtDiv);
+
+	// Inject CSS
+	const style = document.createElement('style');
+	style.id = 'pfsense-widget-styles';
+	style.textContent = `
+	`;
+	document.head.appendChild(style);
+}
+
+
 //widget refresh functions
-function refreshWidgetGlances(nW) {
+function refreshWidgetGlances(nW, nW2) {
 	$.getJSON({url: gSettings.widgets[nW].settings.url + 'api/4/quicklook'}).done(function (result, status, xhr) {
-		document.getElementById('cpuPrct' + nW).innerText = result.cpu + '%'
-		document.getElementById('memPrct' + nW).innerText = result.mem + '%'
+		document.getElementById('cpuPrct' + nW2).innerText = result.cpu + '%'
+		document.getElementById('memPrct' + nW2).innerText = result.mem + '%'
 	});
 	
 	$.getJSON({url: gSettings.widgets[nW].settings.url + 'api/4/sensors'}).done(function (result, status, xhr) {
-		document.getElementById('cpuTemp' + nW).innerText = (result.length > 0? result[0].value + 'C' : '-')
+		document.getElementById('cpuTemp' + nW2).innerText = (result.length > 0? result[0].value + 'C' : '-')
 	});
+}
+
+function refreshWidgetProxmox(nW, nW2) {
+    let widget = document.querySelectorAll('.widgetProxmox')[nW2];
+    if (!widget) return;
+ 
+    const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            url: gSettings.widgets[nW].settings.url,
+            token: gSettings.widgets[nW].settings.token,
+            node: gSettings.widgets[nW].settings.node
+        })
+    };
+
+    fetch('include/proxmox-widget.php', options)
+    .then(response => response.json())
+    .then(data => {
+        if (
+			typeof data !== 'object' ||
+			typeof data.node !== 'object' ||
+			!Array.isArray(data.qemu) ||
+			!Array.isArray(data.lxc) ||
+			!Array.isArray(data.storage)
+		) {
+			throw new Error("Invalid Proxmox API data format");
+		}
+
+		// NODE usage
+        const nodeCPUUsedPercentage = data.node.cpu ? (parseFloat(data.node.cpu * 100).toFixed(2)) : "N/A";
+        const nodeMemoryUsedMB = data.node.memory ? parseInt(data.node.memory.used / 1024 / 1024, 10) : "N/A";
+        const nodeMemoryUsedPercentage = data.node.memory ? (data.node.memory.used / data.node.memory.total * 100).toFixed(2) : 0;
+        const cpuFirst = parseFloat(nodeCPUUsedPercentage) >= parseFloat(nodeMemoryUsedPercentage);
+
+        widget.querySelector('.node-ressources').innerHTML = `
+            <span><i class="fa fa-microchip"></i> ${nodeCPUUsedPercentage}%</span>
+            <span><i class="fa fa-memory"></i> ${nodeMemoryUsedMB} MB</span>
+            <div class="dual-bar-container">
+				<div class="bar cpu-bar" style="width: ${nodeCPUUsedPercentage}%; z-index: ${cpuFirst ? 1 : 2};"></div>
+            	<div class="bar ram-bar" style="width: ${nodeMemoryUsedPercentage}%; z-index: ${cpuFirst ? 2 : 1};"></div>
+            </div>
+        `;
+
+        // VM/CT list
+        let vmList = widget.querySelector('.vm-list');
+        vmList.innerHTML = `
+            <i class="fa fa-server"></i> VMs & Containers
+			<ul class="vm-items"></ul>
+        `;
+
+        let vmContainerList = vmList.querySelector('.vm-items');
+        const allVMs = [...data.qemu.map(vm => ({ ...vm, type: 'qemu' })), ...data.lxc.map(vm => ({ ...vm, type: 'lxc' }))];
+        allVMs.sort((a, b) => a.vmid - b.vmid);
+        allVMs.forEach(vm => {
+            const vmCPUUsedPercentage = (vm.cpu * 100).toFixed(2);
+            const vmMemoryUsedMB = (vm.mem / 1024 / 1024).toFixed(2);
+            const vmMemoryMax = vm.maxmem || (32 * 1024 * 1024 * 1024); // fallback if not defined
+            const vmMemoryUsedPercentage = ((vm.mem / vmMemoryMax) * 100).toFixed(2);
+            const cpuFirst = parseFloat(vmCPUUsedPercentage) >= parseFloat(vmMemoryUsedPercentage);
+
+            let li = document.createElement('li');
+            li.innerHTML = `
+                <strong>${vm.vmid} - ${vm.name}${vm.type === 'lxc' ? ' (LXC)' : ''}</strong>
+                <span><i class="fa fa-microchip"></i> ${vmCPUUsedPercentage}%</span>
+                <span><i class="fa fa-memory"></i> ${vmMemoryUsedMB} MB</span>
+                <div class="dual-bar-container">
+                    <div class="bar cpu-bar" style="width: ${vmCPUUsedPercentage}%; z-index: ${cpuFirst ? 1 : 2};"></div>
+            		<div class="bar ram-bar" style="width: ${vmMemoryUsedPercentage}%; z-index: ${cpuFirst ? 2 : 1};"></div>
+                </div>
+            `;
+            vmContainerList.appendChild(li);
+        });
+
+		// STORAGE list
+		let storageList = widget.querySelector('.storage-list');
+		storageList.innerHTML = `
+			<ul class="storage-items"></ul>
+		`;
+
+		let storageUsedGB = 0
+		let storageTotalGB = 0
+        let storageUsedPercentage = 0
+
+		let storageItems = storageList.querySelector('.storage-items');
+		data.storage.sort((a, b) => a.storage.localeCompare(b.storage));
+		data.storage.forEach(storageItem => {
+			let storageItemUsedGB = (storageItem.used / 1024 / 1024 / 1024);
+			let storageItemTotalGB = (storageItem.total / 1024 / 1024 / 1024);
+			let storageItemUsedPercentage = (storageItem.used_fraction * 100);
+			storageUsedGB = (storageUsedGB + storageItemUsedGB)
+			storageTotalGB = (storageTotalGB + storageItemTotalGB)
+			storageUsedPercentage = (storageUsedGB / storageTotalGB * 100);
+			let li = document.createElement('li');
+			li.innerHTML = `
+				<span class="col-2"><i class="fa fa-hdd"></i></span> ${storageItem.storage} - ${storageItemUsedGB.toFixed(2)} GB (${storageItemUsedPercentage.toFixed(2)}%)
+				<div class="bar-container"><div class="bar" style="width: ${storageItemUsedPercentage}%; background: linear-gradient(to right, #9c27b0, #ce93d8);"></div></div>
+			`;
+			storageItems.appendChild(li);
+		});
+
+		widget.querySelector('.storage-summary').innerHTML = `
+		 <i class="fa fa-database"></i> ${storageUsedGB.toFixed(2)} GB (${storageUsedPercentage.toFixed(2)}%)
+		 <div class="bar-container"><div class="bar" style="width: ${storageUsedPercentage}%; background: linear-gradient(to right, #9c27b0, #ce93d8);"></div></div>
+	`;
+    })
+    .catch(error => {
+		console.error("Proxmox fetch error:", error);
+	
+		const fail = (sel, fallback = 'error') => {
+			const el = widget.querySelector(sel);
+			if (el) el.innerHTML = `<span class="text-danger">${fallback}</span>`;
+		};
+	
+		fail('.node-ressources');
+		fail('.vm-list', 'VMs unavailable');
+		fail('.storage-summary');
+		const storageList = widget.querySelector('.storage-list');
+		if (storageList) storageList.innerHTML = '';
+	});	
+}
+
+function refreshWidgetPfsense(nW, nW2) {
+    let widget = document.querySelectorAll('.widgetPfsense')[nW2];
+    if (!widget) return;
+ 
+    const options = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            url: gSettings.widgets[nW].settings.url,
+            xapikey: gSettings.widgets[nW].settings.xapikey
+        })
+    };
+
+    fetch('include/pfsense-widget.php', options)
+    .then(response => response.json())
+    .then(data => {
+        if (!data || !data.dns || !data.interfaceStatus) {
+            throw new Error("Invalid pfSense API data format");
+        }
+
+		// WAN status
+        const interfaceList = Array.isArray(data.interfaceStatus) ? data.interfaceStatus : [];
+        const wanInterface = interfaceList.find(interface => interface.descr === "WAN") || {};
+        const wanIP = wanInterface.ipaddr ?? "N/A";
+        const wanStatus = wanInterface.status ?? "N/A";
+
+		widget.querySelector('.wan-ip').innerHTML = `
+            <i class="fa fa-globe"></i> ${wanIP}
+		`;
+
+		widget.querySelector('.wanStatus').innerHTML = `
+            <i class="fa fa-signal"></i> ${wanStatus}
+		`;
+	
+		// Bandwidth
+        const now = Date.now();
+        const secondsSinceLast = (now - (widget._lastUpdateTime || now)) / 1000;
+
+        const lastIn = widget._lastInBytes || wanInterface.inbytes;
+        const lastOut = widget._lastOutBytes || wanInterface.outbytes;
+
+        const deltaIn = wanInterface.inbytes - lastIn;
+        const deltaOut = wanInterface.outbytes - lastOut;
+
+        const wanBandwidthIn = (deltaIn * 8 / 1024 / 1024 / secondsSinceLast).toFixed(2);
+        const wanBandwidthOut = (deltaOut * 8 / 1024 / 1024 / secondsSinceLast).toFixed(2);
+
+		widget.querySelector('.bandwidth').innerHTML = `
+            <i class="fa fa-gauge"></i> ${wanBandwidthIn} / ${wanBandwidthOut} Mbit/s
+        `;
+
+		// Save current bandwith for next refresh
+		widget._lastInBytes = wanInterface.inbytes;
+		widget._lastOutBytes = wanInterface.outbytes;
+		widget._lastUpdateTime = now;
+
+		// DNS ping
+		const dnsList = Array.isArray(data.dns?.dnsserver) ? data.dns.dnsserver : [];
+		const dns = dnsList[0] || '1.1.1.1';
+		const pingStart = Date.now();
+		
+		fetch("https://" + dns, { mode: 'no-cors' })
+		  .then(() => {
+		      const ping = Date.now() - pingStart;
+		      widget.querySelector('.ping').innerHTML =
+		          `<i class="fa fa-clock"></i> ${ping} ms`;
+		  })
+		  .catch(() => {
+		      widget.querySelector('.ping').innerHTML =
+		          `<i class="fa fa-clock"></i> timeout`;
+		  });
+
+    })
+    .catch(error => {
+		console.error("pfSense fetch error:", error);
+		const fail = sel => {
+			const el = widget.querySelector(sel);
+			if (el) el.innerHTML = `<span class="text-danger">error</span>`;
+		};
+		fail('.wan-ip');
+		fail('.wanStatus');
+		fail('.bandwidth');
+		fail('.ping');
+		fail('.speedtest');
+	});		
 }
