@@ -1,35 +1,34 @@
 {
 	"page": {
-		"title": "Dasherr",
-		"theme": "Onedark",
-		"openTab": "new"
+		"title": "Obłoczek",
+		"theme": "Lime",
+		"openTab": "same"
 	},
 	"widgets": [
 		{
 			"disable": 0,
-			"name": "Dasher VM",
+			"name": "Monitoring",
 			"type": "glances",
 			"settings": {
-				"url": "http://homeserver:61208/",
+				"url": "https://obloczek.swordfish-everest.ts.net/glances/",
 				"refreshMs": 5000
 			}
 		},
 		{
-			"disable": 0,
+			"disable": 1,
 			"name": "PVE",
 			"type": "proxmox",
 			"settings": {
 				"url": "https://homeserver:8006",
 				"refreshMs": 31000,
 				"node": "pve",
-				"token": "user@realm!tokenname=token" // Privileges: Sys.Audit, Pool.Audit, VM.Audit, Datastore.Audit
+				"token": "user@realm!tokenname=token"
 			}
-		}
-		,
+		},
 		{
-			"disable": 0,
+			"disable": 1,
 			"name": "pfSense",
-			"type": "pfsense", // requires https://github.com/jaredhendrickson13/pfsense-api
+			"type": "pfsense",
 			"settings": {
 				"url": "https://homeserver:443",
 				"refreshMs": 35000,
@@ -39,16 +38,29 @@
 	],
 	"sections": [
 		{
+			"name": "Hosting",
+			"info": "Usługi chmurowe",
+			"tiles": [
+				{
+					"name": "NextCloud",
+					"info": "Prywatna chmura",
+					"url": "https://obloczek.swordfish-everest.ts.net/nextcloud",
+					"faIcon": "fa fa-cloud"
+				}
+			]
+		},
+		{
 			"name": "Monitor",
 			"info": "Server monitoring services",
 			"tiles": [
 				{
 					"name": "Glances",
-					"info": "Glances is a cross-platform monitoring tool which aims to present a maximum of information in a minimum of space",
-					"url": "http://homeserver:61208/",
+					"info": "Monitorowanie systemu",
+					"url": "https://obloczek.swordfish-everest.ts.net/glances",
 					"faIcon": "fa fa-microchip"
 				},
 				{
+					"disable": 1,
 					"name": "UptimeKuma",
 					"url": "http://homeserver:3001/",
 					"faIcon": "fa fa-wave-square"
@@ -57,6 +69,7 @@
 		},
 		{
 			"name": "Maintenance",
+			"disable": 1,
 			"tiles": [
 				{
 					"name": "Portainer",
@@ -72,6 +85,7 @@
 		},
 		{
 			"name": "Services",
+			"disable": 1,
 			"tiles": [
 				{
 					"name": "ChangeDetection",
@@ -87,6 +101,7 @@
 		},
 		{
 			"name": "Media",
+			"disable": 1,
 			"tiles": [
 				{
 					"disable": 1,
@@ -158,7 +173,7 @@
 			"colorOf": "#808080"
 		},
 		"Lime": {
-			"background": "",
+			"background": "res/3d-abstract-plexus-design.jpg",
 			"colorBg": "#263238",
 			"colorPr": "#aabbc3",
 			"colorSc": "#aeea00",
