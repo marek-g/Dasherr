@@ -186,23 +186,33 @@ function createSections() {
     });
 }
 
-async function checkOnline(thisUrl, thisElement) {
-    const options = {
-        method: 'POST',
-        body: new URLSearchParams({ url: thisUrl })
-    };
-
+async function checkOnline(url, el) {
     try {
-        const response = await fetch('include/checkOnline.php', options);
-        if (response.ok) {
-            thisElement.classList.replace('dot', 'dot-green');
-            // Zmiana koloru - zakłada istnienie jQuery i obiektu currTheme
-            if (typeof $ !== 'undefined' && typeof currTheme !== 'undefined') {
-                $('.dot-green').css('background-color', currTheme.colorOn);
+        const res = await fetch('include/checkOnline.php', {
+            method: 'POST',
+            body: new URLSearchParams({ url })
+        });
+        
+        if (res.ok) {
+            // SERWER ONLINE
+            el.classList.add('dot-green');
+            if (typeof currTheme !== 'undefined' && currTheme.colorOn) {
+                el.style.backgroundColor = currTheme.colorOn;
             }
+        } else {
+            // SERWER ODPOWIADA BŁĘDEM (np. 500)
+            throw new Error('Server error');
         }
-    } catch (error) {
-        // Ciche pominięcie przy braku odpowiedzi (zgodnie z wcześniejszą logiką)
+    } catch (e) {
+        // SERWER OFFLINE (timeout, 404, błąd sieci)
+        el.classList.remove('dot-green'); // Usuwamy zieloną klasę
+        
+        // Przywracamy kolor "Offline" z motywu
+        if (typeof currTheme !== 'undefined' && currTheme.colorOf) {
+            el.style.backgroundColor = currTheme.colorOf;
+        } else {
+            el.style.backgroundColor = '#808080'; // Fallback szary
+        }
     }
 }
 
