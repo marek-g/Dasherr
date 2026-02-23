@@ -27,11 +27,11 @@
       "name": "Dysk SSD",
       "settings": {
         "datasets": [
-          { "name": "server-ssd", "label": "Razem", "showTotal": true, "isSum": true },
-          { "name": "server-ssd/manjaro/home", "label": "Home", "showTotal": false, "isSum": false },
-          { "name": "server-ssd/manjaro/root", "label": "Root", "showTotal": false, "isSum": false },
-		  { "name": "server-ssd/manjaro/db", "label": "Bazy danych", "showTotal": false, "isSum": false },
-		  { "name": "server-ssd/git-repos", "label": "GIT repos", "showTotal": false, "isSum": false }
+          { "name": "server-ssd", "label": "Razem", "isSum": true },
+          { "name": "server-ssd/manjaro/home", "label": "Home", "isSum": false },
+          { "name": "server-ssd/manjaro/root", "label": "Root", "isSum": false },
+		  { "name": "server-ssd/manjaro/db", "label": "Bazy danych", "isSum": false },
+		  { "name": "server-ssd/git-repos", "label": "GIT repos", "isSum": false }
         ],
         "refreshMs": 30000
       }
@@ -41,11 +41,11 @@
       "name": "Dysk HDD",
       "settings": {
         "datasets": [
-          { "name": "server-hdd", "label": "Razem", "showTotal": true, "isSum": true },
-          { "name": "server-hdd/download", "label": "Download", "showTotal": false, "isSum": false },
-          { "name": "server-hdd/media", "label": "Media", "showTotal": false, "isSum": false },
-		  { "name": "server-hdd/nextcloud", "label": "Next Cloud", "showTotal": false, "isSum": false },
-		  { "name": "server-hdd/private/photos", "label": "Zdjęcia", "showTotal": false, "isSum": false }
+          { "name": "server-hdd", "label": "Razem", "isSum": true },
+          { "name": "server-hdd/download", "label": "Download", "isSum": false },
+          { "name": "server-hdd/media", "label": "Media", "isSum": false },
+		  { "name": "server-hdd/nextcloud", "label": "Next Cloud", "isSum": false },
+		  { "name": "server-hdd/private/photos", "label": "Zdjęcia", "isSum": false }
         ],
         "refreshMs": 30000
       }

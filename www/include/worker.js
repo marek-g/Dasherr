@@ -312,7 +312,7 @@ function createWidgetZfs(nW) {
                 <div class="progress-container" style="flex: 1; margin: 0;">
                     <div id="zfsBar${nW}_${i}" class="progress-bar" style="width: 0%; background-color: #0dcaf0;"></div>
                 </div>
-                <span id="zfsText${nW}_${i}" class="text-end" style="min-width: 110px; font-family: monospace; font-size: 0.8rem; color: ${labelColor};">
+                <span id="zfsText${nW}_${i}" class="text-end" style="min-width: 140px; font-family: monospace; font-size: 0.8rem; color: ${labelColor};">
                     ...
                 </span>
             </div>`;
@@ -471,22 +471,32 @@ async function refreshWidgetZfs(nW) {
                 const totalGB = (totalBytes / 1073741824).toFixed(1);
                 const usagePct = ((ds.used / totalBytes) * 100).toFixed(1);
 
-                // --- Aktualizacja wizualna paska ---
+                // --- Aktualizacja paska ---
                 barEl.style.width = `${usagePct}%`;
                 barEl.style.backgroundColor = usagePct >= 90 ? '#dc3545' : '#0dcaf0';
 
-                // --- Logika tekstu sterowana niezależnie ---
-                // Sprawdzamy dsConfig (indywidualne ustawienie), jeśli brak - domyślnie true
-                const individualShowTotal = dsConfig.showTotal !== false;
-
-                if (individualShowTotal) {
-                    textEl.innerHTML = `${usedGB} / ${totalGB} GB`;
+                // --- Logika tytułu i tekstu ---
+                if (dsConfig.isSum) {
+                    // Aktualizacja tytułu całego widgetu (h7)
+                    const widgetContainer = barEl.closest('.col');
+                    const titleEl = widgetContainer ? widgetContainer.querySelector('h7') : null;
+                    if (titleEl) {
+                        titleEl.innerText = `${gSettings.widgets[nW].name} (${totalGB} GB)`;
+                    }
+                    
+                    // Tekst w wierszu sumarycznym: np. "120.5 GB (45.2%)"
+                    textEl.innerHTML = `${usedGB} GB (${usagePct}%)`;
                 } else {
-                    textEl.innerHTML = `${usedGB} GB`;
+                    // Tekst w zwykłym wierszu: np. "12.0 GB (10.5%)"
+                    textEl.innerHTML = `${usedGB} GB (${usagePct}%)`;
                 }
 
                 // --- Alarm kolorystyczny ---
-                usagePct >= 90 ? textEl.classList.add('text-danger-bold') : textEl.classList.remove('text-danger-bold');
+                if (parseFloat(usagePct) >= 90) {
+                    textEl.classList.add('text-danger-bold');
+                } else {
+                    textEl.classList.remove('text-danger-bold');
+                }
             }
         });
     } catch (error) {
