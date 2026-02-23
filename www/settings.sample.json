@@ -2,7 +2,8 @@
   "page": {
     "title": "Obłoczek",
     "theme": "Lime",
-    "openTab": "same"
+    "openTab": "same",
+	"glances": "https://obloczek.swordfish-everest.ts.net/glances/"
   },
   "widgets": [
     {
@@ -10,8 +11,7 @@
       "name": "CPU",
       "type": "cpu",
       "settings": {
-	"url": "https://obloczek.swordfish-everest.ts.net/glances/",
-	"refreshMs": 5000
+		"refreshMs": 5000
       }
     },
     {
@@ -19,8 +19,7 @@
       "name": "Pamięć",
       "type": "memory",
       "settings": {
-	"url": "https://obloczek.swordfish-everest.ts.net/glances/",
-	"refreshMs": 5000
+		"refreshMs": 5000
       }
     },
 	{
@@ -56,10 +55,10 @@
       "name": "PVE",
       "type": "proxmox",
       "settings": {
-	"url": "https://homeserver:8006",
-	"refreshMs": 31000,
-	"node": "pve",
-	"token": "user@realm!tokenname=token"
+		"url": "https://homeserver:8006",
+		"refreshMs": 31000,
+		"node": "pve",
+		"token": "user@realm!tokenname=token"
       }
     },
     {
@@ -67,9 +66,9 @@
       "name": "pfSense",
       "type": "pfsense",
       "settings": {
-	"url": "https://homeserver:443",
-	"refreshMs": 35000,
-	"xapikey": "***"
+		"url": "https://homeserver:443",
+		"refreshMs": 35000,
+		"xapikey": "***"
       }
     }
   ],
@@ -78,113 +77,113 @@
       "name": "Hosting",
       "info": "Usługi chmurowe",
       "tiles": [
-	{
-	  "name": "NextCloud",
-	  "info": "Prywatna chmura",
-	  "url": "https://obloczek.swordfish-everest.ts.net/nextcloud/",
-	  "faIcon": "fa fa-cloud"
-	},
-	{
-	  "name": "Jellyfin",
-	  "info": "Kino (odtwarzacz filmów i seriali)",
-	  "url": "https://obloczek.swordfish-everest.ts.net/jellyfin/",
-	  "faIcon": "fa fa-play"
-	},
-	{
-	  "name": "qBittorrent",
-	  "info": "Klient Bittorrent",
-	  "url": "https://obloczek.swordfish-everest.ts.net/qbittorrent/",
-	  "faIcon": "fa fa-download"
-	}
+		{
+		  "name": "NextCloud",
+		  "info": "Prywatna chmura",
+		  "url": "https://obloczek.swordfish-everest.ts.net/nextcloud/",
+		  "faIcon": "fa fa-cloud"
+		},
+		{
+		  "name": "Jellyfin",
+		  "info": "Kino (odtwarzacz filmów i seriali)",
+		  "url": "https://obloczek.swordfish-everest.ts.net/jellyfin/",
+		  "faIcon": "fa fa-play"
+		},
+		{
+		  "name": "qBittorrent",
+		  "info": "Klient Bittorrent",
+		  "url": "https://obloczek.swordfish-everest.ts.net/qbittorrent/",
+		  "faIcon": "fa fa-download"
+		}
       ]
     },
     {
       "name": "Monitor",
       "info": "Server monitoring services",
       "tiles": [
-	{
-	  "name": "Glances",
-	  "info": "Monitorowanie systemu",
-	  "url": "https://obloczek.swordfish-everest.ts.net/glances",
-	  "faIcon": "fa fa-microchip"
-	},
-	{
-	  "disable": 1,
-	  "name": "UptimeKuma",
-	  "url": "http://homeserver:3001/",
-	  "faIcon": "fa fa-wave-square"
-	}
+		{
+		  "name": "Glances",
+		  "info": "Monitorowanie systemu",
+		  "url": "https://obloczek.swordfish-everest.ts.net/glances",
+		  "faIcon": "fa fa-microchip"
+		},
+		{
+		  "disable": 1,
+		  "name": "UptimeKuma",
+		  "url": "http://homeserver:3001/",
+		  "faIcon": "fa fa-wave-square"
+		}
       ]
     },
     {
       "name": "Maintenance",
       "disable": 1,
       "tiles": [
-	{
-	  "name": "Portainer",
-	  "url": "http://homeserver:9000/",
-	  "faIcon": "fab fa-docker"
-	},
-	{
-	  "name": "FileBrowser",
-	  "url": "http://homeserver:8020/",
-	  "faIcon": "fa fa-folder-tree"
-	}
+		{
+		  "name": "Portainer",
+		  "url": "http://homeserver:9000/",
+		  "faIcon": "fab fa-docker"
+		},
+		{
+		  "name": "FileBrowser",
+		  "url": "http://homeserver:8020/",
+		  "faIcon": "fa fa-folder-tree"
+		}
       ]
     },
     {
       "name": "Services",
       "disable": 1,
       "tiles": [
-	{
-	  "name": "ChangeDetection",
-	  "url": "http://homeserver:5000/",
-	  "faIcon": "fa fa-bell"
-	},
-	{
-	  "name": "Syncthing",
-	  "url": "http://homeserver:8384/",
-	  "faIcon": "fa fa-rotate"
-	}
+		{
+		  "name": "ChangeDetection",
+		  "url": "http://homeserver:5000/",
+		  "faIcon": "fa fa-bell"
+		},
+		{
+		  "name": "Syncthing",
+		  "url": "http://homeserver:8384/",
+		  "faIcon": "fa fa-rotate"
+		}
       ]
     },
     {
       "name": "Media",
       "disable": 1,
       "tiles": [
-	{
-	  "disable": 1,
-	  "name": "Readarr",
-	  "url": "http://homeserver:8787/",
-	  "faIcon": "fa fa-book"
-	},
-	{
-	  "name": "JellyFin",
-	  "url": "http://homeserver:8096/",
-	  "faIcon": "fa fa-video"
-	},
-	{
-	  "name": "Radarr",
-	  "url": "http://homeserver:7878/",
-	  "faIcon": "fa fa-clapperboard"
-	},
-	{
-	  "name": "Sonarr",
-	  "url": "http://homeserver:8989/",
-	  "faIcon": "fa fa-tv"
-	}
+		{
+		  "disable": 1,
+		  "name": "Readarr",
+		  "url": "http://homeserver:8787/",
+		  "faIcon": "fa fa-book"
+		},
+		{
+		  "name": "JellyFin",
+		  "url": "http://homeserver:8096/",
+		  "faIcon": "fa fa-video"
+		},
+		{
+		  "name": "Radarr",
+		  "url": "http://homeserver:7878/",
+		  "faIcon": "fa fa-clapperboard"
+		},
+		{
+		  "name": "Sonarr",
+		  "url": "http://homeserver:8989/",
+		  "faIcon": "fa fa-tv"
+		}
       ]
     },
     {
       "name": "Resources",
       "tiles": [
-	{
-	  "disableCheck": 1,
-	  "openTab": "same",
-	  "name": "Self-Hosting",
-	  "url": "?s=settings.sh.json",
-	  "faIcon": "fa-regular fa-hard-drive"
-	}
+		{
+		  "disableCheck": 1,
+		  "openTab": "same",
+		  "name": "Self-Hosting",
+		  "url": "?s=settings.sh.json",
+		  "faIcon": "fa-regular fa-hard-drive"
+		}
       ]
     }
   ],

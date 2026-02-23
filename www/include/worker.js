@@ -41,9 +41,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Pokaż zawartość
     document.querySelector('.container').style.display = 'block';
 
-    // Ustawienia strony
+    // Tytuł strony
     document.title = gSettings.page.title;
     document.getElementById('pageTitle').innerHTML = gSettings.page.title;
+	if (gSettings.page.glances) {
+		updatePageUptime();
+		setInterval(updatePageUptime, 60000); // Odświeżaj uptime co minutę
+	}
     
     // Tworzenie widgetów
     if (gSettings.widgets && gSettings.widgets.length > 0) {
@@ -122,6 +126,31 @@ document.addEventListener('DOMContentLoaded', () => {
         [...tooltipTriggerList].forEach(el => new bootstrap.Tooltip(el));
     }
 });
+
+// --- ODŚWIEŻANIE ELEMENTÓW POZA KAFELKAMI ---
+
+async function updatePageUptime() {
+    const url = gSettings.page.glances;
+    if (!url) return;
+
+    try {
+        const response = await fetch(`${url}api/4/uptime`);
+        let uptimeText = await response.text(); // API Glances zwraca uptime jako prosty string
+        
+        const baseTitle = gSettings.page.title;
+
+		// Czyszczenie cudzysłowów i tłumaczenie
+        uptimeText = uptimeText.replace(/"/g, '');
+        uptimeText = uptimeText.replace(/days/g, 'dni');
+        uptimeText = uptimeText.replace(/day/g, 'dzień');
+        
+        const fullTitle = `${baseTitle} (działa ${uptimeText})`;
+        document.title = fullTitle;
+        document.getElementById('pageTitle').innerHTML = fullTitle;
+    } catch (error) {
+        console.error("Uptime fetch error:", error);
+    }
+}
 
 // --- GENEROWANIE SEKCJI I KAFELKÓW ---
 
@@ -341,7 +370,7 @@ function createWidgetPfsense(nW) {
 // --- FUNKCJE ODŚWIEŻAJĄCE WIDGETY ---
 
 async function refreshWidgetCpu(nW, nW2) {
-    const url = gSettings.widgets[nW].settings.url;
+    const url = gSettings.widgets[nW].settings.url || gSettings.page.glances;
     try {
         const [quicklookRes, sensorsRes] = await Promise.all([
             fetch(`${url}api/4/quicklook`).then(res => res.json()),
@@ -394,7 +423,7 @@ async function refreshWidgetCpu(nW, nW2) {
 }
 
 async function refreshWidgetMemory(nW) {
-    const url = gSettings.widgets[nW].settings.url;
+    const url = gSettings.widgets[nW].settings.url || gSettings.page.glances;
     try {
         const res = await fetch(`${url}api/4/quicklook`).then(r => r.json());
         const usage = res.mem;

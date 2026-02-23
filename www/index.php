@@ -4,7 +4,7 @@
   <?php include 'include/samplesettings.php';?>
 
   <head>
-	<title>Dasherr</title>
+	<title>Obłoczek</title>
 
 	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
 	<meta http-equiv="Pragma" content="no-cache" />
@@ -35,7 +35,7 @@
 
 		<!-- Top right icons -->
 		<a href="#" onclick="javascript:settingsFile? window.location = 'editor.php?s=' + settingsFile : window.location = 'editor.php';" class="iconButton float-end"><i class="fa-solid fa-wrench"></i></a>
-		<a href="https://github.com/erohtar/Dasherr/" target="_blank" class="iconButton float-end"><i class="fa-brands fa-github"></i></a>
+		<a href="https://github.com/marek-g/Dasherr/" target="_blank" class="iconButton float-end"><i class="fa-brands fa-github"></i></a>
 		
 		<!-- Dashboard Title -->
 		<div class="row">
