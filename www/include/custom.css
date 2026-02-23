@@ -42,3 +42,24 @@ body {
 	border: 1px solid #000;
 	padding: 10px 20px;
 }
+
+.progress-container {
+  width: 250px;
+  height: 30px;
+  background-color: #000;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 70%; /* progress percentage */
+  background: linear-gradient(90deg,rgba(0, 255, 0, 1) 0%, rgba(255, 255, 0, 1) 50%, rgba(255, 0, 0, 1) 100%);
+  background-size: 250px 100%;
+  background-repeat: no-repeat;
+  background-position: left;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

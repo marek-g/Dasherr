@@ -1,264 +1,285 @@
 {
-	"page": {
-		"title": "Obłoczek",
-		"theme": "Lime",
-		"openTab": "same"
+  "page": {
+    "title": "Obłoczek",
+    "theme": "Lime",
+    "openTab": "same"
+  },
+  "widgets": [
+    {
+      "disable": 0,
+      "name": "CPU",
+      "type": "cpu",
+      "settings": {
+	"url": "https://obloczek.swordfish-everest.ts.net/glances/",
+	"refreshMs": 5000
+      }
+    },
+    {
+      "disable": 0,
+      "name": "Memory",
+      "type": "memory",
+      "settings": {
+	"url": "https://obloczek.swordfish-everest.ts.net/glances/",
+	"refreshMs": 5000
+      }
+    },
+    {
+      "disable": 1,
+      "name": "PVE",
+      "type": "proxmox",
+      "settings": {
+	"url": "https://homeserver:8006",
+	"refreshMs": 31000,
+	"node": "pve",
+	"token": "user@realm!tokenname=token"
+      }
+    },
+    {
+      "disable": 1,
+      "name": "pfSense",
+      "type": "pfsense",
+      "settings": {
+	"url": "https://homeserver:443",
+	"refreshMs": 35000,
+	"xapikey": "***"
+      }
+    }
+  ],
+  "sections": [
+    {
+      "name": "Hosting",
+      "info": "Usługi chmurowe",
+      "tiles": [
+	{
+	  "name": "NextCloud",
+	  "info": "Prywatna chmura",
+	  "url": "https://obloczek.swordfish-everest.ts.net/nextcloud/",
+	  "faIcon": "fa fa-cloud"
 	},
-	"widgets": [
-		{
-			"disable": 0,
-			"name": "Monitoring",
-			"type": "glances",
-			"settings": {
-				"url": "https://obloczek.swordfish-everest.ts.net/glances/",
-				"refreshMs": 5000
-			}
-		},
-		{
-			"disable": 1,
-			"name": "PVE",
-			"type": "proxmox",
-			"settings": {
-				"url": "https://homeserver:8006",
-				"refreshMs": 31000,
-				"node": "pve",
-				"token": "user@realm!tokenname=token"
-			}
-		},
-		{
-			"disable": 1,
-			"name": "pfSense",
-			"type": "pfsense",
-			"settings": {
-				"url": "https://homeserver:443",
-				"refreshMs": 35000,
-				"xapikey": "***"
-			}
-		}
-	],
-	"sections": [
-		{
-			"name": "Hosting",
-			"info": "Usługi chmurowe",
-			"tiles": [
-				{
-					"name": "NextCloud",
-					"info": "Prywatna chmura",
-					"url": "https://obloczek.swordfish-everest.ts.net/nextcloud",
-					"faIcon": "fa fa-cloud"
-				}
-			]
-		},
-		{
-			"name": "Monitor",
-			"info": "Server monitoring services",
-			"tiles": [
-				{
-					"name": "Glances",
-					"info": "Monitorowanie systemu",
-					"url": "https://obloczek.swordfish-everest.ts.net/glances",
-					"faIcon": "fa fa-microchip"
-				},
-				{
-					"disable": 1,
-					"name": "UptimeKuma",
-					"url": "http://homeserver:3001/",
-					"faIcon": "fa fa-wave-square"
-				}
-			]
-		},
-		{
-			"name": "Maintenance",
-			"disable": 1,
-			"tiles": [
-				{
-					"name": "Portainer",
-					"url": "http://homeserver:9000/",
-					"faIcon": "fab fa-docker"
-				},
-				{
-					"name": "FileBrowser",
-					"url": "http://homeserver:8020/",
-					"faIcon": "fa fa-folder-tree"
-				}
-			]
-		},
-		{
-			"name": "Services",
-			"disable": 1,
-			"tiles": [
-				{
-					"name": "ChangeDetection",
-					"url": "http://homeserver:5000/",
-					"faIcon": "fa fa-bell"
-				},
-				{
-					"name": "Syncthing",
-					"url": "http://homeserver:8384/",
-					"faIcon": "fa fa-rotate"
-				}
-			]
-		},
-		{
-			"name": "Media",
-			"disable": 1,
-			"tiles": [
-				{
-					"disable": 1,
-					"name": "Readarr",
-					"url": "http://homeserver:8787/",
-					"faIcon": "fa fa-book"
-				},
-				{
-					"name": "JellyFin",
-					"url": "http://homeserver:8096/",
-					"faIcon": "fa fa-video"
-				},
-				{
-					"name": "Radarr",
-					"url": "http://homeserver:7878/",
-					"faIcon": "fa fa-clapperboard"
-				},
-				{
-					"name": "Sonarr",
-					"url": "http://homeserver:8989/",
-					"faIcon": "fa fa-tv"
-				}
-			]
-		},
-		{
-			"name": "Resources",
-			"tiles": [
-				{
-					"disableCheck": 1,
-					"openTab": "same",
-					"name": "Self-Hosting",
-					"url": "?s=settings.sh.json",
-					"faIcon": "fa-regular fa-hard-drive"
-				}
-			]
-		}
-	],
-	"themes": {
-		"Blackboard": {
-			"background": "",
-			"colorBg": "#1a1a1a",
-			"colorPr": "#fffdea",
-			"colorSc": "#5c5c5c",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Espresso": {
-			"background": "",
-			"colorBg": "#21211f",
-			"colorPr": "#d1b59a",
-			"colorSc": "#4e4e4e",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Cab": {
-			"background": "",
-			"colorBg": "#f6d305",
-			"colorPr": "#1f1f1f",
-			"colorSc": "#424242",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Cloud": {
-			"background": "",
-			"colorBg": "#f1f2f0",
-			"colorPr": "#35342f",
-			"colorSc": "#37bbe4",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Lime": {
-			"background": "res/3d-abstract-plexus-design.jpg",
-			"colorBg": "#263238",
-			"colorPr": "#aabbc3",
-			"colorSc": "#aeea00",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"White": {
-			"background": "",
-			"colorBg": "#ffffff",
-			"colorPr": "#222222",
-			"colorSc": "#dddddd",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Tron": {
-			"background": "",
-			"colorBg": "#242b33",
-			"colorPr": "#effbff",
-			"colorSc": "#6ee2ff",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Blues": {
-			"background": "",
-			"colorBg": "#2b2c56",
-			"colorPr": "#eff1fc",
-			"colorSc": "#6677eb",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Passion": {
-			"background": "",
-			"colorBg": "#f5f5f5",
-			"colorPr": "#12005e",
-			"colorSc": "#8e24aa",
-			"colorOn": "#8e24aa",
-			"colorOf": "#f5f5f5"
-		},
-		"Chalk": {
-			"background": "",
-			"colorBg": "#263238",
-			"colorPr": "#aabbc3",
-			"colorSc": "#ff869a",
-			"colorOn": "#ff869a",
-			"colorOf": "#263238"
-		},
-		"Paper": {
-			"background": "",
-			"colorBg": "#f8f6f1",
-			"colorPr": "#4c432e",
-			"colorSc": "#aa9a73",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Neon": {
-			"background": "",
-			"colorBg": "#091833",
-			"colorPr": "#effbff",
-			"colorSc": "#ea00d9",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Pumpkin": {
-			"background": "",
-			"colorBg": "#2d3436",
-			"colorPr": "#effbff",
-			"colorSc": "#ffa500",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		},
-		"Onedark": {
-			"background": "",
-			"colorBg": "#282c34",
-			"colorPr": "#dfd9d6",
-			"colorSc": "#98c379",
-			"colorOn": "#98c379",
-			"colorOf": "#808080"
-		},
-		"Mint": {
-			"background": "",
-			"colorBg": "#282525",
-			"colorPr": "#d9d9d9",
-			"colorSc": "#50fbc2",
-			"colorOn": "#1de9b6",
-			"colorOf": "#808080"
-		}
+	{
+	  "name": "Jellyfin",
+	  "info": "Kino (odtwarzacz filmów i seriali)",
+	  "url": "https://obloczek.swordfish-everest.ts.net/jellyfin/",
+	  "faIcon": "fa fa-play"
+	},
+	{
+	  "name": "qBittorrent",
+	  "info": "Klient Bittorrent",
+	  "url": "https://obloczek.swordfish-everest.ts.net/qbittorrent/",
+	  "faIcon": "fa fa-download"
 	}
+      ]
+    },
+    {
+      "name": "Monitor",
+      "info": "Server monitoring services",
+      "tiles": [
+	{
+	  "name": "Glances",
+	  "info": "Monitorowanie systemu",
+	  "url": "https://obloczek.swordfish-everest.ts.net/glances",
+	  "faIcon": "fa fa-microchip"
+	},
+	{
+	  "disable": 1,
+	  "name": "UptimeKuma",
+	  "url": "http://homeserver:3001/",
+	  "faIcon": "fa fa-wave-square"
+	}
+      ]
+    },
+    {
+      "name": "Maintenance",
+      "disable": 1,
+      "tiles": [
+	{
+	  "name": "Portainer",
+	  "url": "http://homeserver:9000/",
+	  "faIcon": "fab fa-docker"
+	},
+	{
+	  "name": "FileBrowser",
+	  "url": "http://homeserver:8020/",
+	  "faIcon": "fa fa-folder-tree"
+	}
+      ]
+    },
+    {
+      "name": "Services",
+      "disable": 1,
+      "tiles": [
+	{
+	  "name": "ChangeDetection",
+	  "url": "http://homeserver:5000/",
+	  "faIcon": "fa fa-bell"
+	},
+	{
+	  "name": "Syncthing",
+	  "url": "http://homeserver:8384/",
+	  "faIcon": "fa fa-rotate"
+	}
+      ]
+    },
+    {
+      "name": "Media",
+      "disable": 1,
+      "tiles": [
+	{
+	  "disable": 1,
+	  "name": "Readarr",
+	  "url": "http://homeserver:8787/",
+	  "faIcon": "fa fa-book"
+	},
+	{
+	  "name": "JellyFin",
+	  "url": "http://homeserver:8096/",
+	  "faIcon": "fa fa-video"
+	},
+	{
+	  "name": "Radarr",
+	  "url": "http://homeserver:7878/",
+	  "faIcon": "fa fa-clapperboard"
+	},
+	{
+	  "name": "Sonarr",
+	  "url": "http://homeserver:8989/",
+	  "faIcon": "fa fa-tv"
+	}
+      ]
+    },
+    {
+      "name": "Resources",
+      "tiles": [
+	{
+	  "disableCheck": 1,
+	  "openTab": "same",
+	  "name": "Self-Hosting",
+	  "url": "?s=settings.sh.json",
+	  "faIcon": "fa-regular fa-hard-drive"
+	}
+      ]
+    }
+  ],
+  "themes": {
+    "Blackboard": {
+      "background": "",
+      "colorBg": "#1a1a1a",
+      "colorPr": "#fffdea",
+      "colorSc": "#5c5c5c",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Espresso": {
+      "background": "",
+      "colorBg": "#21211f",
+      "colorPr": "#d1b59a",
+      "colorSc": "#4e4e4e",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Cab": {
+      "background": "",
+      "colorBg": "#f6d305",
+      "colorPr": "#1f1f1f",
+      "colorSc": "#424242",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Cloud": {
+      "background": "",
+      "colorBg": "#f1f2f0",
+      "colorPr": "#35342f",
+      "colorSc": "#37bbe4",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Lime": {
+      "background": "res/3d-abstract-plexus-design.jpg",
+      "colorBg": "#263238",
+      "colorPr": "#aabbc3",
+      "colorSc": "#aeea00",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "White": {
+      "background": "",
+      "colorBg": "#ffffff",
+      "colorPr": "#222222",
+      "colorSc": "#dddddd",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Tron": {
+      "background": "",
+      "colorBg": "#242b33",
+      "colorPr": "#effbff",
+      "colorSc": "#6ee2ff",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Blues": {
+      "background": "",
+      "colorBg": "#2b2c56",
+      "colorPr": "#eff1fc",
+      "colorSc": "#6677eb",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Passion": {
+      "background": "",
+      "colorBg": "#f5f5f5",
+      "colorPr": "#12005e",
+      "colorSc": "#8e24aa",
+      "colorOn": "#8e24aa",
+      "colorOf": "#f5f5f5"
+    },
+    "Chalk": {
+      "background": "",
+      "colorBg": "#263238",
+      "colorPr": "#aabbc3",
+      "colorSc": "#ff869a",
+      "colorOn": "#ff869a",
+      "colorOf": "#263238"
+    },
+    "Paper": {
+      "background": "",
+      "colorBg": "#f8f6f1",
+      "colorPr": "#4c432e",
+      "colorSc": "#aa9a73",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Neon": {
+      "background": "",
+      "colorBg": "#091833",
+      "colorPr": "#effbff",
+      "colorSc": "#ea00d9",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Pumpkin": {
+      "background": "",
+      "colorBg": "#2d3436",
+      "colorPr": "#effbff",
+      "colorSc": "#ffa500",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    },
+    "Onedark": {
+      "background": "",
+      "colorBg": "#282c34",
+      "colorPr": "#dfd9d6",
+      "colorSc": "#98c379",
+      "colorOn": "#98c379",
+      "colorOf": "#808080"
+    },
+    "Mint": {
+      "background": "",
+      "colorBg": "#282525",
+      "colorPr": "#d9d9d9",
+      "colorSc": "#50fbc2",
+      "colorOn": "#1de9b6",
+      "colorOf": "#808080"
+    }
+  }
 }
