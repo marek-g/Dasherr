@@ -139,10 +139,23 @@ async function updatePageUptime() {
         
         const baseTitle = gSettings.page.title;
 
-		// Czyszczenie cudzysłowów i tłumaczenie
-        uptimeText = uptimeText.replace(/"/g, '');
-        uptimeText = uptimeText.replace(/days/g, 'dni');
-        uptimeText = uptimeText.replace(/day/g, 'dzień');
+		// regex do wyciągnięcia danych: (liczba dni)? (day/days)? (H):(MM):(SS)
+        // obsługuje formaty: "5 days, 1:23:45", "1 day, 0:15:00" lub samo "10:30:15"
+        const match = uptimeText.match(/(?:(\d+)\s+days?,\s+)?(\d+):(\d+):(\d+)/);
+        if (match) {
+            const days = parseInt(match[1]) || 0;
+            const hours = parseInt(match[2]);
+            const minutes = parseInt(match[3]);
+
+            // logika odmiany "dzień" vs "dni"
+            let dayText = "";
+            if (days > 0) {
+                const label = (days === 1) ? "dzień" : "dni";
+                dayText = `${days} ${label}, `;
+            }
+
+            uptimeText = `${dayText}${hours} godz. ${minutes} min.`;
+		}
         
         const fullTitle = `${baseTitle} (działa ${uptimeText})`;
         document.title = fullTitle;
