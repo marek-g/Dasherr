@@ -54,7 +54,7 @@ body {
 
 .progress-bar {
   height: 100%;
-  width: 70%; /* progress percentage */
+  /* width: 70%; <-- progress percentage, controlled by JS */
   background: linear-gradient(90deg,rgba(0, 255, 0, 1) 0%, rgba(255, 255, 0, 1) 50%, rgba(255, 0, 0, 1) 100%);
   background-size: 250px 100%;
   background-repeat: no-repeat;
@@ -62,4 +62,12 @@ body {
   position: absolute;
   top: 0;
   left: 0;
+  transition: width 0.5s ease; /* dodaje płynną animację zmiany paska */
+}
+
+/* Czerwony kolor tekstu - ostrzeżenie o przekroczeniu 90% */
+.text-danger-bold {
+    color: #ff5252 !important;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.2);
 }

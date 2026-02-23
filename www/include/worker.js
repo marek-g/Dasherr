@@ -230,10 +230,10 @@ function createWidgetMemory(nW) {
                 <span class="col-2"><i class="fa fa-memory"></i></span>
                 <span class="col-3">
                     <div class="progress-container">
-                        <div class="progress-bar" style="width: 100%;"></div>
+                        <div id="memBar${nW}" class="progress-bar" style="width: 0%;"></div>
                     </div>
                 </span>
-                <span class="col-7" id="memPrct${nW}"></span>
+                <span class="col-7" id="memPrct${nW}">0%</span>
             </div>
         </div>`;
     createWidgetContainer(nW, content);
@@ -303,11 +303,27 @@ async function refreshWidgetCpu(nW, nW2) {
     }
 }
 
-async function refreshWidgetMemory(nW, nW2) {
+async function refreshWidgetMemory(nW) {
     const url = gSettings.widgets[nW].settings.url;
     try {
-        const result = await fetch(`${url}api/4/quicklook`).then(res => res.json());
-        document.getElementById(`memPrct${nW}`).innerText = `${result.mem}%`;
+        const res = await fetch(`${url}api/4/quicklook`).then(r => r.json());
+        const usage = res.mem;
+
+		// aktualizacja tekstu
+		const textEl = document.getElementById(`memPrct${nW}`);
+        if (textEl) {
+            textEl.innerText = `${usage}%`;
+            // ALARM: Jeśli powyżej 90%, dodaj klasę ostrzegawczą
+            if (usage >= 90) {
+                textEl.classList.add('text-danger-bold');
+            } else {
+                textEl.classList.remove('text-danger-bold');
+            }
+        }
+
+		// aktualizacja paska postępu
+		const barEl = document.getElementById(`memBar${nW}`);
+        if (barEl) barEl.style.width = `${usage}%`;
     } catch (error) {
         console.error("Memory fetch error:", error);
     }
