@@ -74,7 +74,7 @@
   ],
   "sections": [
     {
-      "name": "Hosting",
+      "name": "Usługi Obłoczka",
       "info": "Usługi chmurowe",
       "tiles": [
 		{
@@ -97,8 +97,38 @@
 		}
       ]
     },
+	{
+      "name": "Strony w internecie",
+	  "info": "Przydatne linki",
+      "tiles": [
+		{
+		  "name": "Filman",
+		  "info": "Filmy i seriale (po polsku)",
+		  "url": "https://filman.cc/",
+		  "faIcon": "fa fa-clapperboard"
+		},
+		{
+		  "name": "Zaluknij",
+		  "info": "Filmy i seriale (po polsku)",
+		  "url": "https://zaluknij.cc/",
+		  "faIcon": "fa fa-clapperboard"
+		},
+		{
+		  "name": "Annas Archive",
+		  "info": "Książki i dokumenty",
+		  "url": "https://annas-archive.li/",
+		  "faIcon": "fa fa-book"
+		},
+		{
+		  "name": "The Pirate Bay",
+		  "info": "Torrenty",
+		  "url": "https://thepiratebay.org/",
+		  "faIcon": "fa fa-skull-crossbones"
+		}
+      ]
+    },
     {
-      "name": "Monitor",
+      "name": "Inne",
       "info": "Server monitoring services",
       "tiles": [
 		{
@@ -106,6 +136,13 @@
 		  "info": "Monitorowanie systemu",
 		  "url": "https://obloczek.swordfish-everest.ts.net/glances",
 		  "faIcon": "fa fa-microchip"
+		},
+		{
+		  "disableCheck": 1,
+		  "openTab": "same",
+		  "name": "Self-Hosting",
+		  "url": "?s=settings.sh.json",
+		  "faIcon": "fa-regular fa-hard-drive"
 		},
 		{
 		  "disable": 1,
@@ -171,18 +208,6 @@
 		  "name": "Sonarr",
 		  "url": "http://homeserver:8989/",
 		  "faIcon": "fa fa-tv"
-		}
-      ]
-    },
-    {
-      "name": "Resources",
-      "tiles": [
-		{
-		  "disableCheck": 1,
-		  "openTab": "same",
-		  "name": "Self-Hosting",
-		  "url": "?s=settings.sh.json",
-		  "faIcon": "fa-regular fa-hard-drive"
 		}
       ]
     }
