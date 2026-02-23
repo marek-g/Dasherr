@@ -377,46 +377,45 @@ async function refreshWidgetCpu(nW, nW2) {
             fetch(`${url}api/4/sensors`).then(res => res.json())
         ]);
 
-        // Aktualizacja CPU
-        const cpuUsage = quicklookRes.cpu;
+        // --- AKTUALIZACJA TYTUŁU (Nazwa CPU) ---
+        if (quicklookRes.cpu_name) {
+            // Znajdujemy kontener widgetu na podstawie ID paska postępu
+            const barEl = document.getElementById(`cpuBar${nW}`);
+            const widgetContainer = barEl ? barEl.closest('.col') : null;
+            const titleEl = widgetContainer ? widgetContainer.querySelector('h7') : null;
+            
+            if (titleEl) {
+                // Ustawiamy: Nazwa z konfigu (np. CPU) + nazwa z systemu w nawiasie
+                titleEl.innerText = `${gSettings.widgets[nW].name} - ${quicklookRes.cpu_name}`;
+            }
+        }
 
-		const barEl = document.getElementById(`cpuBar${nW}`);
+        // --- Reszta istniejącej logiki (Usage) ---
+        const cpuUsage = quicklookRes.cpu;
+        const barEl = document.getElementById(`cpuBar${nW}`);
         if (barEl) barEl.style.width = `${cpuUsage}%`;
 
-		const textEl = document.getElementById(`cpuPrct${nW}`);
+        const textEl = document.getElementById(`cpuPrct${nW}`);
         if (textEl) {
             textEl.innerText = `${cpuUsage}%`;
-
-			// alarm powyżej 90%, ostrzeżenie powyżej 70%
-			textEl.classList.remove('text-warning-bold');
-			textEl.classList.remove('text-danger-bold');
-            if (cpuUsage >= 90) {
-                textEl.classList.add('text-danger-bold');
-            } else if (cpuUsage >= 70) {
-				textEl.classList.add('text-warning-bold');
-			}
+            textEl.classList.remove('text-warning-bold', 'text-danger-bold');
+            if (cpuUsage >= 90) textEl.classList.add('text-danger-bold');
+            else if (cpuUsage >= 70) textEl.classList.add('text-warning-bold');
         }
         
-        // Aktualizacja temperatury
-        const pkgSensor = sensorsRes.find(o => o.label === "Package id 0");
-		const cpuTemp = pkgSensor ? pkgSensor.value : 0;
+        // --- Aktualizacja temperatury ---
+        const pkgSensor = sensorsRes.find(o => o.label === "Package id 0" || o.label === "CPU Temp");
+        const cpuTemp = pkgSensor ? pkgSensor.value : 0;
 
-		const tempBarEl = document.getElementById(`tempBar${nW}`);
-		if (tempBarEl) {
-            // Zakładamy 1:1 (stopnie na procenty)
+        const tempBarEl = document.getElementById(`tempBar${nW}`);
+        if (tempBarEl) {
             tempBarEl.style.width = `${Math.min(cpuTemp, 100)}%`;
-
-			// alarm powyżej 90%, ostrzeżenie powyżej 70%
-			tempBarEl.classList.remove('text-warning-bold');
-			tempBarEl.classList.remove('text-danger-bold');
-            if (cpuTemp >= 90) {
-                tempBarEl.classList.add('text-danger-bold');
-            } else if (cpuTemp >= 70) {
-				tempBarEl.classList.add('text-warning-bold');
-			}
         }
-		
-        document.getElementById(`cpuTemp${nW}`).innerText = pkgSensor ? `${pkgSensor.value}°C` : '-';
+        
+        const tempTextEl = document.getElementById(`cpuTemp${nW}`);
+        if (tempTextEl) {
+            tempTextEl.innerText = pkgSensor ? `${pkgSensor.value}°C` : '-';
+        }
     } catch (error) {
         console.error("CPU fetch error:", error);
     }
