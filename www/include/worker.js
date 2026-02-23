@@ -58,30 +58,35 @@ document.addEventListener('DOMContentLoaded', () => {
             const refreshMs = widget.settings.refreshMs;
 
             switch (widget.type) {
-                case "cpu":
-                    createWidgetCpu(idx);
-                    setInterval(refreshWidgetCpu, refreshMs, idx, counters.cpu);
-                    refreshWidgetCpu(idx, counters.cpu);
-                    counters.cpu++;
-                    break;
-                case "memory":
-                    createWidgetMemory(idx);
-                    setInterval(refreshWidgetMemory, refreshMs, idx, counters.memory);
-                    refreshWidgetMemory(idx, counters.memory);
-                    counters.memory++;
-                    break;
-                case "proxmox":
-                    createWidgetProxmox(idx);
-                    setInterval(refreshWidgetProxmox, refreshMs, idx, counters.proxmox);
-                    refreshWidgetProxmox(idx, counters.proxmox);
-                    counters.proxmox++;
-                    break;
-                case "pfsense":
-                    createWidgetPfsense(idx);
-                    setInterval(refreshWidgetPfsense, refreshMs, idx, counters.pfsense);
-                    refreshWidgetPfsense(idx, counters.pfsense);
-                    counters.pfsense++;
-                    break;
+            case "cpu":
+                createWidgetCpu(idx);
+                setInterval(refreshWidgetCpu, refreshMs, idx, counters.cpu);
+                refreshWidgetCpu(idx, counters.cpu);
+                counters.cpu++;
+                break;
+            case "memory":
+                createWidgetMemory(idx);
+                setInterval(refreshWidgetMemory, refreshMs, idx, counters.memory);
+                refreshWidgetMemory(idx, counters.memory);
+                counters.memory++;
+                break;
+			case "zfs":
+				createWidgetZfs(idx);
+				setInterval(refreshWidgetZfs, refreshMs, idx);
+				refreshWidgetZfs(idx);
+				break;
+            case "proxmox":
+                createWidgetProxmox(idx);
+                setInterval(refreshWidgetProxmox, refreshMs, idx, counters.proxmox);
+                refreshWidgetProxmox(idx, counters.proxmox);
+                counters.proxmox++;
+                break;
+            case "pfsense":
+                createWidgetPfsense(idx);
+                setInterval(refreshWidgetPfsense, refreshMs, idx, counters.pfsense);
+                refreshWidgetPfsense(idx, counters.pfsense);
+                counters.pfsense++;
+                break;
             }
         });
     }
@@ -254,6 +259,40 @@ function createWidgetMemory(nW) {
     createWidgetContainer(nW, content);
 }
 
+function createWidgetZfs(nW) {
+    const settings = gSettings.widgets[nW].settings;
+    const datasets = settings.datasets || []; // Teraz to tablica obiektów
+    
+    let rowsHtml = '';
+    
+    datasets.forEach((dsConfig, i) => {
+        const dsName = dsConfig.name;
+        // użyj label z konfiguracji, a jeśli go nie ma - skróć nazwę systemową
+        const displayLabel = dsConfig.label || (dsName.includes('/') ? dsName.split('/').pop() : dsName);
+
+		// wybór ikony na podstawie nowej flagi isSum
+		const iconClass = dsConfig.isSum === true ? 'fa-layer-group' : 'fa-hdd';
+		const labelColor = dsConfig.isSum ? '#ffc107' : 'inherit'; // Złoty dla sumy, domyślny dla reszty
+		
+        rowsHtml += `
+            <div class="d-flex align-items-center ${i < datasets.length - 1 ? 'mb-2' : ''}" style="gap: 10px;">
+                <i class="fa ${iconClass}" style="width: 15px; text-align: center; color: ${labelColor};"></i>
+                <span class="text-start text-truncate" style="width: 80px; font-size: 0.75rem; font-weight: bold; color: ${labelColor};" title="${dsName}">
+                    ${displayLabel}
+                </span>
+                <div class="progress-container" style="flex: 1; margin: 0;">
+                    <div id="zfsBar${nW}_${i}" class="progress-bar" style="width: 0%; background-color: #0dcaf0;"></div>
+                </div>
+                <span id="zfsText${nW}_${i}" class="text-end" style="min-width: 110px; font-family: monospace; font-size: 0.8rem; color: ${labelColor};">
+                    ...
+                </span>
+            </div>`;
+    });
+
+    const content = `<div class="widget widgetZfs">${rowsHtml}</div>`;
+    createWidgetContainer(nW, content);
+}
+
 function createWidgetProxmox(nW) {
     const content = `
         <div class="widget widgetProxmox">
@@ -382,6 +421,50 @@ async function refreshWidgetMemory(nW) {
     }
 }
 
+async function refreshWidgetZfs(nW) {
+    const settings = gSettings.widgets[nW].settings;
+    const datasetsConfig = settings.datasets || [];
+    
+    try {
+        const response = await fetch('include/zfs-data.php');
+        const allData = await response.json();
+        
+        if (allData.error) throw new Error(allData.error);
+
+        datasetsConfig.forEach((dsConfig, i) => {
+            const ds = allData.find(item => item.name === dsConfig.name);
+            const barEl = document.getElementById(`zfsBar${nW}_${i}`);
+            const textEl = document.getElementById(`zfsText${nW}_${i}`);
+
+            if (ds && barEl && textEl) {
+                const totalBytes = ds.used + ds.avail;
+                const usedGB = (ds.used / 1073741824).toFixed(1);
+                const totalGB = (totalBytes / 1073741824).toFixed(1);
+                const usagePct = ((ds.used / totalBytes) * 100).toFixed(1);
+
+                // --- Aktualizacja wizualna paska ---
+                barEl.style.width = `${usagePct}%`;
+                barEl.style.backgroundColor = usagePct >= 90 ? '#dc3545' : '#0dcaf0';
+
+                // --- Logika tekstu sterowana niezależnie ---
+                // Sprawdzamy dsConfig (indywidualne ustawienie), jeśli brak - domyślnie true
+                const individualShowTotal = dsConfig.showTotal !== false;
+
+                if (individualShowTotal) {
+                    textEl.innerHTML = `${usedGB} / ${totalGB} GB`;
+                } else {
+                    textEl.innerHTML = `${usedGB} GB`;
+                }
+
+                // --- Alarm kolorystyczny ---
+                usagePct >= 90 ? textEl.classList.add('text-danger-bold') : textEl.classList.remove('text-danger-bold');
+            }
+        });
+    } catch (error) {
+        console.error("ZFS fetch error:", error);
+    }
+}
+
 async function refreshWidgetProxmox(nW, nW2) {
     const widget = document.querySelectorAll('.widgetProxmox')[nW2];
     if (!widget) return;
@@ -418,7 +501,7 @@ async function refreshWidgetProxmox(nW, nW2) {
 
         // --- Lista VM/CT ---
         const allVMs = [...data.qemu.map(vm => ({ ...vm, type: 'qemu' })), ...data.lxc.map(vm => ({ ...vm, type: 'lxc' }))]
-            .sort((a, b) => a.vmid - b.vmid);
+              .sort((a, b) => a.vmid - b.vmid);
 
         const vmsHtml = allVMs.map(vm => {
             const vmCPUUsedPercentage = (vm.cpu * 100).toFixed(2);

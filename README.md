@@ -16,6 +16,7 @@ A minimal and lightweight dashboard for your self-hosted services (and bookmarks
 - Support for alternate configurations without needing multiple Dasherr installations
 
 ## Installation
+
 ### With Docker
 - Install any webserver under Docker (I myself use [this one](https://hub.docker.com/r/linuxserver/nginx)). Here is a Docker Compose [example](https://github.com/erohtar/Dasherr/issues/10)
 - Drop all the files from Dasherr release into the `config/www` folder of nginx (or another webserver of your choice)
@@ -70,6 +71,50 @@ Sample:
 		}
 	}
 ]
+```
+
+#### ZFS Widget
+
+ZFS widget needs access to run `sudo zfs list` command. Please add that option for your www user (`http` in Manjaro):
+
+``` shell
+sudo visudo
+```
+
+and append these lines:
+
+```
+## Server Apache może uruchamiać komendę zfs list
+http ALL=(ALL) NOPASSWD: /usr/bin/zfs list -Hp -o name\,used\,avail
+```
+
+And test that it works:
+
+``` shell
+sudo -u http sudo /usr/bin/zfs list -Hp -o name,used,avail
+```
+
+Server www still may not allow to run the command. Please run:
+
+``` shell
+sudo systemctl edit httpd.service
+```
+
+And add this section before "### Edits below this comment will be discarded":
+
+``` ini
+[Service]
+NoNewPrivileges=no
+PrivateDevices=no
+ProtectControlGroups=no
+ProtectSystem=full
+```
+
+Restart services:
+
+``` shell
+sudo systemctl daemon-reload
+sudo systemctl restart httpd
 ```
 
 ### Sections
