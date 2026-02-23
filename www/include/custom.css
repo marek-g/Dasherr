@@ -39,14 +39,14 @@ body {
 }
 
 #json-display {
-	border: 1px solid #000;
+	border: 1px solid #0F0;
 	padding: 10px 20px;
 }
 
 .progress-container {
   width: 250px;
   height: 30px;
-  background-color: #000;
+  background-color: #333;
   border-radius: 5px;
   overflow: hidden;
   position: relative;
@@ -63,6 +63,13 @@ body {
   top: 0;
   left: 0;
   transition: width 0.5s ease; /* dodaje płynną animację zmiany paska */
+}
+
+/* Pomarańczowy kolor tekstu - ostrzeżenie o przekroczeniu 70% */
+.text-warning-bold {
+    color: #ff8852 !important;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 120, 0, 0.2);
 }
 
 /* Czerwony kolor tekstu - ostrzeżenie o przekroczeniu 90% */

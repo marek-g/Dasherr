@@ -220,14 +220,21 @@ async function checkOnline(url, el) {
 
 function createWidgetCpu(nW) {
     const content = `
-        <div class="widget widgetCpu text-end">
-            <div class="row">
-                <span class="col-2"><i class="fa fa-microchip"></i></span>
-                <span class="col-7" id="cpuPrct${nW}"></span>
+        <div class="widget widgetCpu">
+            <div class="d-flex align-items-center mb-2" style="gap: 10px;">
+                <i class="fa fa-microchip" style="width: 20px; text-align: center;"></i>
+                <div class="progress-container" style="flex: 1; margin: 0;">
+                    <div id="cpuBar${nW}" class="progress-bar" style="width: 0%;"></div>
+                </div>
+                <span id="cpuPrct${nW}" class="text-end" style="min-width: 45px; font-family: monospace;">0%</span>
             </div>
-            <div class="row">
-                <span class="col-2"><i class="fa fa-temperature-low"></i></span>
-                <span class="col-7" id="cpuTemp${nW}"></span>
+
+            <div class="d-flex align-items-center" style="gap: 10px;">
+                <i class="fa fa-temperature-low" style="width: 20px; text-align: center;"></i>
+                <div class="progress-container" style="flex: 1; margin: 0;">
+                    <div id="tempBar${nW}" class="progress-bar" style="width: 0%; background-color: #ffc107;"></div>
+                </div>
+                <span id="cpuTemp${nW}" class="text-end" style="min-width: 45px; font-family: monospace;">-</span>
             </div>
         </div>`;
     createWidgetContainer(nW, content);
@@ -235,15 +242,13 @@ function createWidgetCpu(nW) {
 
 function createWidgetMemory(nW) {
     const content = `
-        <div class="widget widgetMemory text-end">
-            <div class="row">
-                <span class="col-2"><i class="fa fa-memory"></i></span>
-                <span class="col-3">
-                    <div class="progress-container">
-                        <div id="memBar${nW}" class="progress-bar" style="width: 0%;"></div>
-                    </div>
-                </span>
-                <span class="col-7" id="memPrct${nW}">0%</span>
+        <div class="widget widgetMemory">
+            <div class="d-flex align-items-center" style="gap: 10px;">
+                <i class="fa fa-memory" style="width: 20px; text-align: center;"></i>
+                <div class="progress-container" style="flex: 1; margin: 0;">
+                    <div id="memBar${nW}" class="progress-bar" style="width: 0%;"></div>
+                </div>
+                <span id="memPrct${nW}" class="text-end" style="min-width: 45px; font-family: monospace;">0%</span>
             </div>
         </div>`;
     createWidgetContainer(nW, content);
@@ -303,10 +308,46 @@ async function refreshWidgetCpu(nW, nW2) {
             fetch(`${url}api/4/quicklook`).then(res => res.json()),
             fetch(`${url}api/4/sensors`).then(res => res.json())
         ]);
+
+        // Aktualizacja CPU
+        const cpuUsage = quicklookRes.cpu;
+
+		const barEl = document.getElementById(`cpuBar${nW}`);
+        if (barEl) barEl.style.width = `${cpuUsage}%`;
+
+		const textEl = document.getElementById(`cpuPrct${nW}`);
+        if (textEl) {
+            textEl.innerText = `${cpuUsage}%`;
+
+			// alarm powyżej 90%, ostrzeżenie powyżej 70%
+			textEl.classList.remove('text-warning-bold');
+			textEl.classList.remove('text-danger-bold');
+            if (cpuUsage >= 90) {
+                textEl.classList.add('text-danger-bold');
+            } else if (cpuUsage >= 70) {
+				textEl.classList.add('text-warning-bold');
+			}
+        }
         
-        document.getElementById(`cpuPrct${nW}`).innerText = `${quicklookRes.cpu}%`;
-        
+        // Aktualizacja temperatury
         const pkgSensor = sensorsRes.find(o => o.label === "Package id 0");
+		const cpuTemp = pkgSensor ? pkgSensor.value : 0;
+
+		const tempBarEl = document.getElementById(`tempBar${nW}`);
+		if (tempBarEl) {
+            // Zakładamy 1:1 (stopnie na procenty)
+            tempBarEl.style.width = `${Math.min(cpuTemp, 100)}%`;
+
+			// alarm powyżej 90%, ostrzeżenie powyżej 70%
+			tempBarEl.classList.remove('text-warning-bold');
+			tempBarEl.classList.remove('text-danger-bold');
+            if (cpuTemp >= 90) {
+                tempBarEl.classList.add('text-danger-bold');
+            } else if (cpuTemp >= 70) {
+				tempBarEl.classList.add('text-warning-bold');
+			}
+        }
+		
         document.getElementById(`cpuTemp${nW}`).innerText = pkgSensor ? `${pkgSensor.value}C` : '-';
     } catch (error) {
         console.error("CPU fetch error:", error);
@@ -323,12 +364,14 @@ async function refreshWidgetMemory(nW) {
 		const textEl = document.getElementById(`memPrct${nW}`);
         if (textEl) {
             textEl.innerText = `${usage}%`;
-            // ALARM: Jeśli powyżej 90%, dodaj klasę ostrzegawczą
+            // alarm powyżej 90%, ostrzeżenie powyżej 70%
+			textEl.classList.remove('text-warning-bold');
+			textEl.classList.remove('text-danger-bold');
             if (usage >= 90) {
                 textEl.classList.add('text-danger-bold');
-            } else {
-                textEl.classList.remove('text-danger-bold');
-            }
+            } else if (usage >= 70) {
+				textEl.classList.add('text-warning-bold');
+			}
         }
 
 		// aktualizacja paska postępu
