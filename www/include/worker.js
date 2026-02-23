@@ -348,7 +348,7 @@ async function refreshWidgetCpu(nW, nW2) {
 			}
         }
 		
-        document.getElementById(`cpuTemp${nW}`).innerText = pkgSensor ? `${pkgSensor.value}C` : '-';
+        document.getElementById(`cpuTemp${nW}`).innerText = pkgSensor ? `${pkgSensor.value}°C` : '-';
     } catch (error) {
         console.error("CPU fetch error:", error);
     }
