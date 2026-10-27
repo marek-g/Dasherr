@@ -84,6 +84,12 @@
 		  "faIcon": "fa fa-cloud"
 		},
 		{
+		  "name": "Mały Wariat",
+		  "info": "OpenWebUI",
+		  "url": "https://obloczek.swordfish-everest.ts.net:8000/",
+		  "faIcon": "fa fa-robot"
+		},
+		{
 		  "name": "Jellyfin",
 		  "info": "Kino (odtwarzacz filmów i seriali)",
 		  "url": "https://obloczek.swordfish-everest.ts.net/jellyfin/",
