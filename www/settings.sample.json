@@ -93,7 +93,7 @@
 		  "name": "Forgejo",
 		  "info": "OpenWebUI",
 		  "url": "https://obloczek.swordfish-everest.ts.net:8003/",
-		  "faIcon": "fa fa-git"
+		  "faIcon": "fa-brands fa-git"
 		},
 		{
 		  "name": "Jellyfin",
