@@ -90,6 +90,12 @@
 		  "faIcon": "fa fa-robot"
 		},
 		{
+		  "name": "Forgejo",
+		  "info": "OpenWebUI",
+		  "url": "https://obloczek.swordfish-everest.ts.net:8003/",
+		  "faIcon": "fa fa-git"
+		},
+		{
 		  "name": "Jellyfin",
 		  "info": "Kino (odtwarzacz filmów i seriali)",
 		  "url": "https://obloczek.swordfish-everest.ts.net/jellyfin/",
